@@ -17,7 +17,7 @@ This is the code implementation for our paper submitted to ICLR 2023:
 Modify the corresponding configuration in the config file or command-line arguments.
 
 Example:
-> Path of datasets: `--path` (`./remasker/`) 
+> Path of datasets: `--path` (`./`) 
 
 ## Usage Example
 You can run this basic command to get the imputation results of ReMasker on iris dataset:
