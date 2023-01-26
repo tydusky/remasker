@@ -1,8 +1,8 @@
 # ReMasker
 
-This is the code implementation for our paper submitted to ICLR 2023:
+This is the code implementation for our paper submitted to ICML 2023:
 
-**Have Missing Data? Make It Miss More! Imputing Tabular Data with Masked Autoencoding**
+**ReMasker: Imputing Tabular Data with Masked Autoencoding**
 
 ## Installation
 1. Require environment of `python>=3.9`
