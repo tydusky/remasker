@@ -5,6 +5,7 @@ from torch import nn as nn
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 import math
+import argparse
 
 class MaskEmbed(nn.Module):
     """ record to mask embedding
@@ -168,6 +169,51 @@ def get_dataset(dataset : str, path : str):
 
     return X, y
 
+
+def get_args_parser():
+    parser = argparse.ArgumentParser('MAE pre-training', add_help=False)
+    parser.add_argument('--dataset', default='california', type=str)
+    parser.add_argument('--batch_size', default=64, type=int,
+                        help='Batch size per GPU (effective batch size is batch_size * accum_iter * # gpus')
+    parser.add_argument('--max_epochs', default=600, type=int)
+    parser.add_argument('--accum_iter', default=1, type=int,
+                        help='Accumulate gradient iterations (for increasing the effective batch size under memory constraints)')
+
+    # Model parameters
+    parser.add_argument('--mask_ratio', default=0.5, type=float, help='Masking ratio (percentage of removed patches).')
+    parser.add_argument('--embed_dim', default=32, type=int, help='embedding dimensions')
+    parser.add_argument('--depth', default=6, type=int, help='encoder depth')
+    parser.add_argument('--decoder_depth', default=4, type=int, help='decoder depth')
+    parser.add_argument('--num_heads', default=4, type=int, help='number of heads')
+    parser.add_argument('--mlp_ratio', default=4., type=float, help='mlp ratio')
+    parser.add_argument('--encode_func', default='linear', type=str, help='encoding function')
+
+    parser.add_argument('--norm_field_loss', default=False,
+                        help='Use (per-patch) normalized field as targets for computing loss')
+    parser.set_defaults(norm_field_loss=False)
+
+    # Optimizer parameters
+    parser.add_argument('--weight_decay', type=float, default=0.05, help='weight decay (default: 0.05)')
+    parser.add_argument('--lr', type=float, default=None, metavar='LR', help='learning rate (absolute lr)')
+    parser.add_argument('--blr', type=float, default=1e-3, metavar='LR',
+                        help='base learning rate: absolute_lr = base_lr * total_batch_size / 256')
+    parser.add_argument('--min_lr', type=float, default=1e-5, metavar='LR',
+                        help='lower lr bound for cyclic schedulers that hit 0')
+    parser.add_argument('--warmup_epochs', type=int, default=40, metavar='N', help='epochs to warmup LR')
+
+    ###### change this path
+    parser.add_argument('--path', default='/data/tianyu/remasker/', type=str, help='dataset path')
+    parser.add_argument('--exp_name', default='test', type=str, help='experiment name')
+
+    # Dataset parameters
+    parser.add_argument('--device', default='cuda', help='device to use for training / testing')
+    parser.add_argument('--seed', default=666, type=int)
+
+    parser.add_argument('--overwrite', default=True, help='whether to overwrite default config')
+    parser.add_argument('--pin_mem', action='store_false')
+
+    # distributed training parameters
+    return parser
 
 if __name__ == '__main__':
     
