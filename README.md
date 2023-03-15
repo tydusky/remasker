@@ -19,8 +19,29 @@ Modify the corresponding configuration in the config file or command-line argume
 Example:
 > Path of datasets: `--path` (`./`) 
 
-## Usage Example
+## Basic Command
 You can run this basic command to get the imputation results of ReMasker on iris dataset:
 
 `python plugin_mae.py --dataset iris`
 
+## Toy Example Usage
+```python
+import numpy as np
+import pandas as pd
+from utils import get_args_parser
+from hyperimpute.plugins.imputers import Imputers
+from plugin_mae import MAEPlugin
+
+args = get_args_parser().parse_args()
+
+X_raw = np.arange(50).reshape(10, 5) * 1.0
+X = pd.DataFrame(X_raw, columns=['0', '1', '2', '3', '4'])
+X.iat[3,0] = np.nan
+
+imputers = Imputers()
+imputers.add(MAEPlugin.name(), MAEPlugin)
+imputer = imputers.get('mae', args)
+
+imputed = imputer.fit_transform(X)
+print(imputed.iat[3,0])
+```
